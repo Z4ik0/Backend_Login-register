@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../database/connectToDatabase");
+import { DataTypes } from "sequelize";
+import { sequelize } from "../database/connectToDatabase.js";
 
-const tablauUsuarios = sequelize.define('Users', {
+export const tablauUsuarios = sequelize.define('Users', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -19,7 +19,7 @@ const tablauUsuarios = sequelize.define('Users', {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: true, 
         validate: {
             isEmail: true,
         }
@@ -28,10 +28,8 @@ const tablauUsuarios = sequelize.define('Users', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            min: 6,
-            max: 12,
+            len: [6,12],
         }
     },
 })
 
-module.exports = tablauUsuarios;

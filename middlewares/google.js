@@ -1,7 +1,10 @@
 import passport from "passport";
 import { OAuth2Strategy as GoogleStrategy } from "passport-google-oauth";
 import { config } from "dotenv";
+
 config();
+
+
 
 const emails = ["2022469utsh.edu.mx"];
 
