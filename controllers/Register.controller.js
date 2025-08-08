@@ -1,4 +1,4 @@
-import { tablauUsuarios } from "../models/usuario.js";
+import { tablauUsuarios } from "../models/usuario.model.js";
 
 export const Register = async (req, res) => {
   try {
@@ -8,8 +8,8 @@ export const Register = async (req, res) => {
     const existEmail = await tablauUsuarios.findOne({
       where: {
         email: registerEmail,
-      }
-    })
+      },
+    });
 
     const existUser = await tablauUsuarios.findOne({
       where: {
@@ -25,12 +25,12 @@ export const Register = async (req, res) => {
       });
     }
 
-    if(existUser){
+    if (existUser) {
       return res.status(400).json({
         success: false,
         message: "El usuario ya existe intenta con otro",
-        errorType: "Already_user_exist"
-      })
+        errorType: "Already_user_exist",
+      });
     }
 
     // Crear nuevo usuario
@@ -40,13 +40,18 @@ export const Register = async (req, res) => {
       password: registerPass,
     });
 
-    return res.status(201).json({
-      success: true,
-      message: "Usuario registrado exitosamente",
-      data: {
-        user: newUser.user,
-        email: newUser.email,
-      },
+    req.login(newUser, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error al iniciar sesión" });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Sesión iniciada",
+        data: {
+          email: newUser.email,
+          user: newUser.user,
+        },
+      });
     });
   } catch (error) {
     console.error("Error en Register:", error);

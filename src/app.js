@@ -8,21 +8,6 @@ import router from "../routes/routes.js";
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cors());
-app.use(
-  session({
-    secret: "secreto_super_seguro",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false },
-  })
-);
-app.use(express.json());
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(router);
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -30,5 +15,24 @@ app.use(
   })
 );
 
+// Middlewares
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(
+  session({
+    secret: "secreto_super_seguro",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // HTTPS = true, HTTP (local) = false
+      sameSite: "lax", // HTTPS + cross-origin = 'none', local = 'lax'
+    },
+  })
+);
+
+app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(router);
 
 export default app;

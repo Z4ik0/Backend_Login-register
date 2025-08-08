@@ -1,4 +1,4 @@
-import { tablauUsuarios } from "../models/usuario.js";
+import { tablauUsuarios } from "../models/usuario.model.js";
 import { Op } from "sequelize";
 
 export const Login = async (req, res) => {
@@ -29,15 +29,20 @@ export const Login = async (req, res) => {
       });
     }
 
-    // 3. Éxito
-    return res.status(200).json({
-      success: true,
-      message: "Login exitoso",
-      data: {
-        user: usuario.user,
-        email: usuario.email,
-      },
+    req.login(usuario, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error al iniciar sesión" });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Sesión iniciada",
+        data: {
+          email: usuario.email,
+          user: usuario.user,
+        },
+      });
     });
+
   } catch (error) {
     console.error("Error en Login:", error);
     return res.status(500).json({

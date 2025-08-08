@@ -1,12 +1,9 @@
 import passport from "passport";
-import { OAuth2Strategy as GoogleStrategy } from "passport-google-oauth";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { config } from "dotenv";
+import { googleUser } from "../models/google.models.js";
 
 config();
-
-
-
-const emails = ["2022469utsh.edu.mx"];
 
 passport.use(
   "auth-google",
@@ -16,23 +13,38 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/auth/google/callback",
     },
-    function (accessToken, refreshToken, profile, done) {
-      const response = emails.includes(profile.emails[0].value);
-      if (response) {
-        done(null, profile);
-      } else {
-        emails.push(profile.emails[0].value);
-        done(null, profile);
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const googleId = profile.id;
+        const email = profile.emails[0].value;
+        const name = profile.displayName;
+
+        // Buscar o crear usuario en tabla Google
+        let usuario = await googleUser.findOne({ where: { googleId } });
+
+        if (!usuario) {
+          usuario = await googleUser.create({
+            googleId,
+            email,
+            name,
+          });
+        }
+
+        return done(null, usuario);
+      } catch (error) {
+        return done(error, null);
       }
     }
   )
 );
 
-// Estas funciones permiten guardar los datos del usuario entre peticiones
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser((user, done) => {
+  done(null, { id: user.id, type: "google" });
 });
 
-passport.deserializeUser(function (user, done) {
-  done(null, user);
+passport.deserializeUser(async (data, done) => {
+  if (data.type === "google") {
+    const usuario = await googleUser.findByPk(data.id);
+    done(null, usuario);
+  }
 });
