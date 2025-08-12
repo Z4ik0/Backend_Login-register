@@ -1,4 +1,6 @@
 import { tablauUsuarios } from "../models/usuario.model.js";
+import bcrypt from 'bcrypt';
+
 
 export const Register = async (req, res) => {
   try {
@@ -33,11 +35,13 @@ export const Register = async (req, res) => {
       });
     }
 
+    const hashedPasswrod = await bcrypt.hash(registerPass, 10);
+
     // Crear nuevo usuario
     const newUser = await tablauUsuarios.create({
       user: registerUser,
       email: registerEmail,
-      password: registerPass,
+      password: hashedPasswrod,
     });
 
     req.login(newUser, (err) => {

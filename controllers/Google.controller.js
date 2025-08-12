@@ -8,7 +8,7 @@ export const googleAuth = passport.authenticate("auth-google", {
 
 export const googleCallback = passport.authenticate("auth-google", {
   failureRedirect: "/login",
-  successRedirect: "http://localhost:5173/", // redirige al frontend
+  successRedirect: "http://localhost:5173", // redirige al frontend
 });
 
 export const googleProfile = (req, res) => {

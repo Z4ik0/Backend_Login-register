@@ -28,7 +28,7 @@ export const tablauUsuarios = sequelize.define("Users", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [6, 12],
+      len: [6, 1000],
     },
   },
   resetToken: {

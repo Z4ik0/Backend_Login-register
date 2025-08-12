@@ -1,5 +1,6 @@
 import { tablauUsuarios } from "../models/usuario.model.js";
 import { Op } from "sequelize";
+import bcrypt from 'bcrypt';
 
 export const Login = async (req, res) => {
   try {
@@ -21,7 +22,8 @@ export const Login = async (req, res) => {
       });
     }
 
-    if (usuario.password !== loginPass) {
+    const match = await bcrypt.compare(loginPass, usuario.password);
+    if (!match) {
       return res.status(400).json({
         success: false,
         message: "Contraseña incorrecta",

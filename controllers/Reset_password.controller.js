@@ -1,5 +1,6 @@
 import { tablauUsuarios } from "../models/usuario.model.js";
 import { Op } from "sequelize";
+import bcrypt from 'bcrypt';
 
 export const ResetPassword = async (req, res) => {
   const { token } = req.body;
@@ -16,7 +17,10 @@ export const ResetPassword = async (req, res) => {
     return res.status(400).json({ message: "Token inválido o expirado", success: false});
   }
 
-  user.password = newPassword;
+  const hashedPasswrod = await bcrypt.hash(newPassword, 10);
+
+
+  user.password = hashedPasswrod;
   user.resetToken = null;
   user.resetTokenExpiry = null;
   await user.save();

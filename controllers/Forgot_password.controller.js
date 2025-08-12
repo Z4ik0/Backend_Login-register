@@ -62,7 +62,7 @@ export const ForgotPassword = async (req, res) => {
       padding: 20px;
     ">
 
-      <h1 style="margin-bottom: 30px; font-size: 28px;">Trocas San Juan</h1>
+      <h1 style="margin-bottom: 30px; font-size: 28px;">The Collector’s Garage</h1>
 
       <p style="font-size: 16px; line-height: 1.8; margin: 0 0 30px;">
         Hola <span style="color: #428ce2; font-weight: bold;">cliente</span>,<br>
@@ -73,7 +73,7 @@ export const ForgotPassword = async (req, res) => {
         Para continuar, haz clic en el siguiente botón:
       </p>
 
-      <a href="https://329c9616847d.ngrok-free.app/Reset/${token}" style="
+      <a href="https://428eb95572ed.ngrok-free.app/Reset/${token}" style="
         display: inline-block;
         background-color: #428ce2;
         color: #fff;
