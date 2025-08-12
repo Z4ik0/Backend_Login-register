@@ -2,7 +2,7 @@ import { tablauUsuarios } from "../models/usuario.model.js";
 import { Op } from "sequelize";
 
 export const ResetPassword = async (req, res) => {
-  const { token } = req.params;
+  const { token } = req.body;
   const { newPassword } = req.body;
 
   const user = await tablauUsuarios.findOne({
@@ -13,7 +13,7 @@ export const ResetPassword = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: "Token inválido o expirado" });
+    return res.status(400).json({ message: "Token inválido o expirado", success: false});
   }
 
   user.password = newPassword;

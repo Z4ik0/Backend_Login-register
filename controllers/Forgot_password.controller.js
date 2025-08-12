@@ -5,20 +5,18 @@ import crypto from "crypto";
 export const ForgotPassword = async (req, res) => {
   try {
     const user = await tablauUsuarios.findOne({
-      where: { email: req.body.email },
+      where: { email: req.body.resetEmail },
     });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ 
-          message: "No se encontró un usuario con ese correo.",
-          success: false
-        });
+      return res.status(404).json({
+        message: "No se encontró un usuario con ese correo.",
+        success: false,
+      });
     }
 
     const token = crypto.randomBytes(20).toString("hex");
-    const expires = Date.now() + 1000 * 60 * 30;
+    const expires = new Date(Date.now() + 1000 * 60 * 30); 
 
     await user.update({
       resetToken: token,
@@ -39,8 +37,7 @@ export const ForgotPassword = async (req, res) => {
       to: user.email,
       from: "ic3386941@gmail.com",
       subject: "Restablecimiento de Contraseña",
-      text:
-        `<div style="
+      html: `<div style="
     width: 500px;
     height: 800px;
     background-image: url('https://i.postimg.cc/W3dS9vyy/ffa85cdf-02ed-43bb-8a20-96273df31b7b.jpg');
@@ -51,6 +48,8 @@ export const ForgotPassword = async (req, res) => {
     position: relative;
     overflow: hidden;
     display: flex;
+    box-sizing: border-box;
+    padding: 70px 40px 20px 40px;
     align-items: center;
     justify-content: center;
   ">
@@ -74,7 +73,7 @@ export const ForgotPassword = async (req, res) => {
         Para continuar, haz clic en el siguiente botón:
       </p>
 
-      <a href="https://${req.headers.host}/Reset/${token}" style="
+      <a href="https://329c9616847d.ngrok-free.app/Reset/${token}" style="
         display: inline-block;
         background-color: #428ce2;
         color: #fff;
@@ -106,12 +105,13 @@ export const ForgotPassword = async (req, res) => {
 
     </div>
   </div>
-` 
-       
+`,
     };
     /**`http://${req.headers.host}/reset/${token}\n\n` */
     await transport.sendMail(mailOptions);
-    res.status(200).json({ message: "Correo de restablecimiento enviado.", success: true});
+    res
+      .status(200)
+      .json({ message: "Correo de restablecimiento enviado.", success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor.", success: false });
